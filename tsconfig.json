@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./assets/js",
+    "declaration": false,
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noLib": false,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "suppressImplicitAnyIndexErrors": false,
+    "target": "es6"
+  },
+  "compileOnSave": false,
+  "exclude": ["node_modules"]
+}
