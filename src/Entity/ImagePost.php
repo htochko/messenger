@@ -4,25 +4,29 @@ namespace App\Entity;
 
 use App\Repository\ImagePostRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: ImagePostRepository::class)]
 class ImagePost
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('image:output')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('image:output')]
     private ?string $originalFilename = null;
 
     #[ORM\Column]
+    #[Groups('image:output')]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups('image:output')]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()

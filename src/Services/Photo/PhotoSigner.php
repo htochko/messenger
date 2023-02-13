@@ -41,7 +41,7 @@ class PhotoSigner
     private function getRandomLogoFilename(): string
     {
         $finder = new Finder();
-        $finder->in(__DIR__.'/../../assets/logos')
+        $finder->in(__DIR__.'/../../../assets/logo')
             ->files();
 
         // array keys are the absolute file paths

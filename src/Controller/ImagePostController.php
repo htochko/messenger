@@ -29,11 +29,16 @@ class ImagePostController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route("/api/images", methods: ["POST"])]
     public function create(
         Request $request,
         ValidatorInterface $validator,
-        PhotoFileManager $photoManager, EntityManagerInterface $entityManager, PhotoSigner $photoSigner
+        PhotoFileManager $photoManager,
+        EntityManagerInterface $entityManager,
+        PhotoSigner $photoSigner
     )
     {
         /** @var UploadedFile $imageFile */
@@ -59,12 +64,13 @@ class ImagePostController extends AbstractController
         /*
          * Start adding a logo
          */
-        $updatedContents = $photoSigner->ponkafy(
+        $updatedContents = $photoSigner->addLogo(
             $photoManager->read($imagePost->getFilename())
         );
         $photoManager->update($imagePost->getFilename(), $updatedContents);
-        $imagePost->markAsPonkaAdded();
+        $imagePost->markAsLogoAdded();
         $entityManager->flush();
+
         /*
          * end adding logo
          */

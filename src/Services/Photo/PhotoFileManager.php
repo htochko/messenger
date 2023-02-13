@@ -4,14 +4,16 @@ namespace App\Services\Photo;
 
 use App\Entity\ImagePost;
 use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Visibility;
-use League\Flysystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class PhotoFileManager
 {
-    public function __construct(private readonly Filesystem $filesystem, private string $publicAssetBaseUrl)
+    public function __construct(
+        private FilesystemOperator $photoFilesystem,
+        private string $publicAssetBaseUrl)
     {
     }
 
@@ -29,7 +31,7 @@ class PhotoFileManager
         $newFilename = pathinfo($originalFilename, PATHINFO_FILENAME).'-'.uniqid().'.'.$file->guessExtension();
         $stream = fopen($file->getPathname(), 'r');
         try {
-            $this->filesystem->writeStream(
+            $this->photoFilesystem->writeStream(
                 $newFilename,
                 $stream,
                 [
@@ -52,7 +54,7 @@ class PhotoFileManager
         // make it a bit slow
         sleep(3);
 
-        $this->filesystem->delete($filename);
+        $this->photoFilesystem->delete($filename);
     }
 
     public function getPublicPath(ImagePost $imagePost): string
@@ -65,7 +67,7 @@ class PhotoFileManager
      */
     public function read(string $filename): string
     {
-        return $this->filesystem->read($filename);
+        return $this->photoFilesystem->read($filename);
     }
 
     /**
@@ -73,6 +75,6 @@ class PhotoFileManager
      */
     public function update(string $filename, string $updatedContents): void
     {
-        $this->filesystem->write($filename, $updatedContents);
+        $this->photoFilesystem->write($filename, $updatedContents);
     }
 }

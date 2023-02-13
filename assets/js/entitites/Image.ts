@@ -2,5 +2,7 @@ export interface Image {
     id: number,
     createdAt: string,
     updatedAt: string,
-    filename: string
+    url: string,
+    originalFilename: string,
+    "@id"?: string
 }
