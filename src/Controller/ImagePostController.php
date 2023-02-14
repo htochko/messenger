@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\ImagePost;
+use App\Message\AddLogoToImage;
+use App\Message\DeleteImagePost;
 use App\Services\Photo\PhotoSigner;
 use App\Repository\ImagePostRepository;
 use App\Services\Photo\PhotoFileManager;
@@ -16,6 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class ImagePostController extends AbstractController
 {
@@ -38,7 +41,7 @@ class ImagePostController extends AbstractController
         ValidatorInterface $validator,
         PhotoFileManager $photoManager,
         EntityManagerInterface $entityManager,
-        PhotoSigner $photoSigner
+        MessageBusInterface $messageBus,
     )
     {
         /** @var UploadedFile $imageFile */
@@ -61,30 +64,15 @@ class ImagePostController extends AbstractController
         $entityManager->persist($imagePost);
         $entityManager->flush();
 
-        /*
-         * Start adding a logo
-         */
-        $updatedContents = $photoSigner->addLogo(
-            $photoManager->read($imagePost->getFilename())
-        );
-        $photoManager->update($imagePost->getFilename(), $updatedContents);
-        $imagePost->markAsLogoAdded();
-        $entityManager->flush();
-
-        /*
-         * end adding logo
-         */
+        $messageBus->dispatch(new AddLogoToImage($imagePost));
 
         return $this->toJson($imagePost, 201);
     }
 
     #[Route('/api/images/{id}', methods: ['DELETE'])]
-    public function delete(ImagePost $imagePost, EntityManagerInterface $entityManager, PhotoFileManager $photoManager)
+    public function delete(ImagePost $imagePost, MessageBusInterface $messageBus)
     {
-        $photoManager->deleteImage($imagePost->getFilename());
-
-        $entityManager->remove($imagePost);
-        $entityManager->flush();
+        $messageBus->dispatch(new DeleteImagePost($imagePost));
 
         return new Response(null, 204);
     }

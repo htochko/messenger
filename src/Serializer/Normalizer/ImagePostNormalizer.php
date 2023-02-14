@@ -2,43 +2,43 @@
 
 namespace App\Serializer\Normalizer;
 
-use App\Entity\ImagePost;
 use App\Services\Photo\PhotoFileManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-
+use App\Entity\ImagePost;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 class ImagePostNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
 {
+    use NormalizerAwareTrait;
+
+    const ALREADY_CALLED = 'IMAGE_POST_NORMALIZER_ALREADY_CALLED';
+
     public function __construct(
-        private ObjectNormalizer $normalizer,
         private PhotoFileManager $uploaderManager,
         private UrlGeneratorInterface $router)
     {
 
     }
 
-    /**
-     * @param ImagePost $imagePost
-     */
-    public function normalize($imagePost, $format = null, array $context = array()): array
+    public function normalize($object, string $format = null, array $context = []): array
     {
-        $data = $this->normalizer->normalize($imagePost, $format, $context);
+        $context[self::ALREADY_CALLED] = true;
+        $data = $this->normalizer->normalize($object, $format, $context);
 
-        // a custom, and therefore "poor" way of adding a link to myself
-        // formats like JSON-LD (from API Platform) do this in a much
-        // nicer and more standardized way
         $data['@id'] = $this->router->generate('get_image_post_item', [
-            'id' => $imagePost->getId(),
+            'id' => $object->getId(),
         ]);
-        $data['url'] = $this->uploaderManager->getPublicPath($imagePost);
+        $data['url'] = $this->uploaderManager->getPublicPath($object);
 
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
         return $data instanceof ImagePost;
     }
 
