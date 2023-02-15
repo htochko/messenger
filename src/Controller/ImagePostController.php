@@ -64,7 +64,7 @@ class ImagePostController extends AbstractController
         $entityManager->persist($imagePost);
         $entityManager->flush();
 
-        $messageBus->dispatch(new AddLogoToImage($imagePost));
+        $messageBus->dispatch(new AddLogoToImage($imagePost->getId()));
 
         return $this->toJson($imagePost, 201);
     }

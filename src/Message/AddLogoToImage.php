@@ -6,12 +6,12 @@ use App\Entity\ImagePost;
 
 class AddLogoToImage
 {
-    public function __construct(private readonly ImagePost $imagePost)
+    public function __construct(private readonly int $imagePostId)
     {
     }
 
-    public function  getImagePost(): ImagePost
+    public function  getImagePostId(): int
     {
-        return $this->imagePost;
+        return $this->imagePostId;
     }
 }
