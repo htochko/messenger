@@ -12,7 +12,7 @@ framework:
         routing:
             # Route your messages to the transports
             'App\Message\AddLogoToImage': async
-            #'App\Message\DeleteImagePost': async 
+            'App\Message\DeletePhotoFile': async 
 
 # when@test:
 #    framework:
