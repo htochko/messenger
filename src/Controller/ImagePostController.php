@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\ImagePost;
 use App\Message\AddLogoToImage;
 use App\Message\DeleteImagePost;
-use App\Services\Photo\PhotoSigner;
 use App\Repository\ImagePostRepository;
 use App\Services\Photo\PhotoFileManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +18,8 @@ use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class ImagePostController extends AbstractController
 {
@@ -64,7 +65,11 @@ class ImagePostController extends AbstractController
         $entityManager->persist($imagePost);
         $entityManager->flush();
 
-        $messageBus->dispatch(new AddLogoToImage($imagePost->getId()));
+        $message = new AddLogoToImage($imagePost->getId());
+        $envelope = new Envelope($message, [
+            new DelayStamp(500)
+        ]);
+        $messageBus->dispatch($envelope);
 
         return $this->toJson($imagePost, 201);
     }
