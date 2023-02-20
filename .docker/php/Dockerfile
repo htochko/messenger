@@ -1,6 +1,6 @@
 FROM php:8-fpm
 
-RUN apt-get update && apt-get install -y software-properties-common \
+RUN apt-get update && apt-get install -y software-properties-common supervisor \
 # may be should be moved to -dev part  \
             wget curl libpng* \
             unzip  zip \
