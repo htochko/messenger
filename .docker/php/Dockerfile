@@ -1,12 +1,13 @@
 FROM php:8-fpm
 
-RUN apt-get update && apt-get install -y software-properties-common supervisor \
+RUN apt-get update && apt-get install -y software-properties-common supervisor procps \
 # may be should be moved to -dev part  \
             wget curl libpng* \
             unzip  zip \
             git \
             nginx sudo \
             net-tools vim && \
+            rm -rf /var/lib/apt/lists/* && \
     # enable mysql
     docker-php-ext-install mysqli pdo pdo_mysql gd &&  \
     docker-php-ext-enable pdo_mysql && \

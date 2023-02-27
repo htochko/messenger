@@ -12,9 +12,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class DeleteImagePostHandler
 {
     public function __construct(
-        private readonly PhotoFileManager $photoFileManager,
         private readonly EntityManagerInterface $entityManager,
-        private readonly MessageBusInterface $messageBus,
+        private readonly MessageBusInterface $eventBus,
     ){
     }
 
@@ -24,6 +23,6 @@ class DeleteImagePostHandler
         $this->entityManager->remove($imagePost);
         $this->entityManager->flush();
 
-        $this->messageBus->dispatch(new DeletePhotoFile($filename));
+        $this->eventBus->dispatch(new DeletePhotoFile($filename));
     }
 }
