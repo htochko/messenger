@@ -1,15 +1,15 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\MessageHandler\Command;
 
-use App\Message\AddLogoToImage;
+use App\Message\Command\AddLogoToImage;
+use App\Repository\ImagePostRepository;
 use App\Services\Photo\PhotoFileManager;
 use App\Services\Photo\PhotoSigner;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use App\Repository\ImagePostRepository;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class AddLogoToImageHandler implements LoggerAwareInterface

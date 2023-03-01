@@ -1,10 +1,9 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\MessageHandler\Command;
 
-use App\Message\DeleteImagePost;
-use App\Message\DeletePhotoFile;
-use App\Services\Photo\PhotoFileManager;
+use App\Message\Command\DeleteImagePost;
+use App\Message\Command\DeletePhotoFile;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -24,5 +23,13 @@ class DeleteImagePostHandler
         $this->entityManager->flush();
 
         $this->eventBus->dispatch(new DeletePhotoFile($filename));
+    }
+
+    public static function getHandledMessages():iterable {
+        yield DeleteImagePost::class => [
+            'method' => '__invoke',
+            'priority' => 10,
+            'from_transport' => 'async',
+        ];
     }
 }
